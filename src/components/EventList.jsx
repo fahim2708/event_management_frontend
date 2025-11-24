@@ -5,6 +5,7 @@ import { RiDeleteBin6Fill } from "react-icons/ri";
 import { FaRegEdit } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { toast } from "react-toastify";
+import AddEventModal from "./AddEventModal";
 
 export default function EventList() {
   const [events, setEvents] = useState([]);
@@ -65,19 +66,37 @@ export default function EventList() {
     setEvents(events.filter((e) => e.id !== id));
   };
 
+  //Handle Modal
+  const [showAddModal, setShowAddModal] = useState(false);
+  //
+  const fetchEvents = () => {
+    api.get("/events", { headers }).then((res) => setEvents(res.data));
+  };
+  //Fetch events on load
+  useEffect(() => {
+    if (!token) return navigate("/");
+    fetchEvents();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-700">My Events</h2>
           <Link
-            to="/add"
-            title="Add Event"
-            className="bg-green-600 text-white px-2 py-2 rounded hover:bg-green-700 transition-colors"
+            onClick={() => setShowAddModal(true)}
+            className="bg-green-600 text-white px-2 py-2 rounded hover:bg-green-700 transition-colors cursor-pointer"
           >
             <FaPlus size={20} />
           </Link>
         </div>
+
+        {showAddModal && (
+          <AddEventModal
+            setShowAddModal={setShowAddModal}
+            refreshEvents={fetchEvents}
+          />
+        )}
 
         {events.length === 0 ? (
           <p className="text-red-600">No data found</p>
@@ -117,7 +136,7 @@ export default function EventList() {
                         onClick={() => handleDelete(event.id)}
                         className="text-red-600"
                       >
-                        Delete
+                        <RiDeleteBin6Fill size={25} />
                       </button>
                     </div>
                   </td>
