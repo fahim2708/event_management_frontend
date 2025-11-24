@@ -4,6 +4,11 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import EventList from "./components/EventList";
 import EventForm from "./components/EventForm";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import About from "./components/About";
+import Services from "./components/Services";
+import ContactUs from "./components/ContactUs";
 
 function App() {
   return (
@@ -17,8 +22,14 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/events" element={<EventList />} />
           <Route path="/add" element={<EventForm />} />
+          <Route path="/edit/:id" element={<EventForm />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/contact-us" element={<ContactUs />} />
         </Route>
+         {/* <ToastContainer autoClose={2000} position="top-right" /> */}
       </Routes>
+      <ToastContainer autoClose={2000} position="top-right" />
     </BrowserRouter>
   );
 }

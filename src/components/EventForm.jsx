@@ -1,34 +1,74 @@
 import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function EventForm({ event }) {
-  const [data, setData] = useState({
-    title: event ? event.title : "",
-    description: event ? event.description : "",
-    date: event ? event.date : "",
+  const { id } = useParams();
+
+  // const [data, setData] = useState({
+  //   title: event ? event.title : "",
+  //   description: event ? event.description : "",
+  //   date: event ? event.date : "",
+  // });
+
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    date: "",
   });
+
+  useEffect(() => {
+    if (id) {
+      api.get(`/events/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }).then((res) => {
+        setFormData(res.data); // old data set in form
+      });
+    }
+  }, [id]);
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const submit = async (e) => {
     e.preventDefault();
+
     try {
-      if (event) {
+      if (id) {
         // Update event
-        await api.put(`/events/${event.id}`, data, {
+        await api.put(`/events/${id}`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        toast.success("Event updated successfully!");
       } else {
         // Create new event
-        await api.post("/events", data, {
+        await api.post("/events", formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+        toast.success("Event created successfully!");
       }
+
       navigate("/events");
     } catch (err) {
       console.error(err);
-      alert("Failed to save event");
+
+      if (err.response?.status === 422) {
+        // Laravel validation error
+        toast.error("Validation failed! Please check your inputs.");
+      } else if (err.response?.status === 401) {
+        toast.error("Unauthorized! Please login again.");
+      } else {
+        toast.error("Failed to save event!");
+      }
     }
   };
 
@@ -47,8 +87,8 @@ export default function EventForm({ event }) {
           <input
             type="text"
             placeholder="Event Title"
-            value={data.title}
-            onChange={(e) => setData({ ...data, title: e.target.value })}
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -58,8 +98,8 @@ export default function EventForm({ event }) {
           <label className="mb-1 text-gray-600">Description</label>
           <textarea
             placeholder="Event Description"
-            value={data.description}
-            onChange={(e) => setData({ ...data, description: e.target.value })}
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows="4"
             required
@@ -70,8 +110,8 @@ export default function EventForm({ event }) {
           <label className="mb-1 text-gray-600">Date</label>
           <input
             type="date"
-            value={data.date}
-            onChange={(e) => setData({ ...data, date: e.target.value })}
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -81,10 +121,9 @@ export default function EventForm({ event }) {
           type="submit"
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors"
         >
-          {event ? "Update" : "Save"}
+          {id ? "Update" : "Save"}
         </button>
       </form>
     </div>
   );
 }
-

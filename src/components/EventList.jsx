@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { FaRegEdit } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
 export default function EventList() {
   const [events, setEvents] = useState([]);
@@ -11,6 +12,47 @@ export default function EventList() {
 
   const token = localStorage.getItem("token");
   const headers = { Authorization: `Bearer ${token}` };
+
+  const confirmDelete = (onConfirm) => {
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p>Are you sure you want to delete?</p>
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => {
+                onConfirm();
+                closeToast();
+              }}
+              className="bg-red-600 text-white px-3 py-1 rounded"
+            >
+              Yes
+            </button>
+
+            <button
+              onClick={closeToast}
+              className="bg-gray-300 px-3 py-1 rounded"
+            >
+              No
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+      }
+    );
+  };
+
+  const handleDelete = (id) => {
+    confirmDelete(() => {
+      // API request to delete
+      console.log("Deleted:", id);
+      toast.success("Deleted successfully!");
+    });
+  };
 
   useEffect(() => {
     if (!token) return navigate("/");
@@ -63,16 +105,22 @@ export default function EventList() {
                         <FaRegEdit size={25} />
                       </Link>
 
-                      <button
+                      {/* <button
                         onClick={() => del(e.id)}
                         className="text-red-600 hover:text-red-800 transition-colors duration-200"
                         title="Delete"
                       >
                         <RiDeleteBin6Fill size={25} />
+                      </button> */}
+
+                      <button
+                        onClick={() => handleDelete(event.id)}
+                        className="text-red-600"
+                      >
+                        Delete
                       </button>
                     </div>
                   </td>
-
                 </tr>
               ))}
             </tbody>
