@@ -25,7 +25,7 @@ function App() {
           <Route path="/edit/:id" element={<EventForm />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
-          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/contact-us/:id" element={<ContactUs />} />
         </Route>
          {/* <ToastContainer autoClose={2000} position="top-right" /> */}
       </Routes>

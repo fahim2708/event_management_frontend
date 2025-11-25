@@ -49,8 +49,9 @@ export default function EventList() {
 
   const handleDelete = (id) => {
     confirmDelete(() => {
-      // API request to delete
-      console.log("Deleted:", id);
+      api.delete(`/events/${id}`, { headers });
+      setEvents(events.filter((e) => e.id !== id));
+
       toast.success("Deleted successfully!");
     });
   };
@@ -60,10 +61,18 @@ export default function EventList() {
     api.get("/events", { headers }).then((res) => setEvents(res.data));
   }, []);
 
-  const del = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this event?")) return;
-    await api.delete(`/events/${id}`, { headers });
-    setEvents(events.filter((e) => e.id !== id));
+  // const del = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this event?")) return;
+  //   await api.delete(`/events/${id}`, { headers });
+  //   setEvents(events.filter((e) => e.id !== id));
+  // };
+
+  const del = (id) => {
+    confirmDelete(async () => {
+      await api.delete(`/events/${id}`, { headers });
+      setEvents(events.filter((e) => e.id !== id));
+      toast.success("Event deleted successfully!");
+    });
   };
 
   //Handle Modal
@@ -133,7 +142,7 @@ export default function EventList() {
                       </button> */}
 
                       <button
-                        onClick={() => handleDelete(event.id)}
+                        onClick={() => del(e.id)}
                         className="text-red-600"
                       >
                         <RiDeleteBin6Fill size={25} />

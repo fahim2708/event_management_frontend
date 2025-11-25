@@ -19,7 +19,7 @@ const Layout = () => {
             to="/events"
             className="hover:text-yellow-300 transition-colors"
           >
-            Home
+            Events
           </Link>
 
           <Link
@@ -37,7 +37,7 @@ const Layout = () => {
           </Link>
 
           <Link
-            to="/contact-us"
+            to="/contact-us/3"
             className="hover:text-yellow-300 transition-colors"
           >
             Contact Us
