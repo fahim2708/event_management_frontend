@@ -1,5 +1,5 @@
+import { useParams } from "react-router-dom";
 export default function ContactUs() {
-    return (
-        "This contact us page"
-    );
+  const {id} = useParams();
+  return <div>This contact us page — ID: {id}</div>;
 }
