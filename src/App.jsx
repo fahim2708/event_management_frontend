@@ -21,7 +21,7 @@ function App() {
         {/* Protected pages wrapped with Layout */}
         <Route element={<Layout />}>
           <Route path="/events" element={<EventList />} />
-          <Route path="/add" element={<EventForm />} />
+          {/* <Route path="/add" element={<EventForm />} /> */}
           <Route path="/edit/:id" element={<EventForm />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
